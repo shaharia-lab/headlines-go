@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  title: BD News API
+  description: API for fetching headlines from various Bangladeshi news sources
+  version: 1.0.0
+servers:
+  - url: http://localhost:{port}
+    description: Local development server
+    variables:
+      port:
+        default: "8080"
+        description: The port the server is running on
+paths:
+  /:
+    get:
+      summary: Serve the frontend HTML
+      description: Serves the embedded frontend.html file
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/html:
+              schema:
+                type: string
+  /api/headlines:
+    get:
+      summary: Get headlines from all sources
+      description: Fetches and returns headlines from various Bangladeshi news sources
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SourceResponse'
+          headers:
+            X-Cache:
+              schema:
+                type: string
+                enum: [HIT, MISS]
+              description: Indicates whether the response was served from cache
+components:
+  schemas:
+    SourceResponse:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/SourceInfo'
+        headlines:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsItem'
+    SourceInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        logo:
+          type: string
+          format: uri
+        homepage:
+          type: string
+          format: uri
+    NewsItem:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+          format: uri

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Headlines</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom scrollbar styles */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+    <div class="container mx-auto py-4 px-6">
+        <h1 class="text-3xl font-bold">News Headlines</h1>
+    </div>
+</header>
+
+<main class="container mx-auto p-6">
+    <div id="newsBoards" class="news-boards flex overflow-x-auto space-x-6 pb-6 pt-4 custom-scrollbar"></div>
+</main>
+
+<script>
+    const boardColors = [
+        'bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-red-100',
+        'bg-indigo-100', 'bg-purple-100', 'bg-pink-100', 'bg-teal-100'
+    ];
+
+    async function fetchNews() {
+        try {
+            const response = await fetch('/api/headlines');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            displayNews(data);
+        } catch (error) {
+            console.error('Failed to fetch news data:', error);
+            document.getElementById('newsBoards').innerHTML = '<p class="text-red-500 text-center w-full">Failed to load news. Please try again later.</p>';
+        }
+    }
+
+    function displayNews(data) {
+        const newsBoardsContainer = document.getElementById('newsBoards');
+        newsBoardsContainer.innerHTML = '';
+
+        data.forEach((sourceData, index) => {
+            const board = document.createElement('div');
+            const colorClass = boardColors[index % boardColors.length];
+            board.className = `flex-shrink-0 w-96 ${colorClass} rounded-lg shadow-lg p-6 flex flex-col h-[600px]`; // Fixed height and flex column
+
+            // Source header
+            const sourceHeader = document.createElement('div');
+            sourceHeader.className = 'flex items-center mb-4 pb-2 border-b';
+
+            const sourceLogo = document.createElement('img');
+            sourceLogo.src = sourceData.source.logo;
+            sourceLogo.alt = `${sourceData.source.name} logo`;
+            sourceLogo.className = 'w-8 h-8 mr-2 rounded';
+
+            const sourceTitle = document.createElement('h2');
+            sourceTitle.className = 'text-xl font-bold text-gray-800';
+            sourceTitle.textContent = sourceData.source.name;
+
+            sourceHeader.appendChild(sourceLogo);
+            sourceHeader.appendChild(sourceTitle);
+
+            // Homepage link
+            const homepageLink = document.createElement('a');
+            homepageLink.href = sourceData.source.homepage;
+            homepageLink.className = 'text-sm text-blue-600 hover:text-blue-800 block mb-4';
+            homepageLink.textContent = 'Visit Homepage';
+            homepageLink.target = '_blank';
+            homepageLink.rel = 'noopener noreferrer';
+
+            board.appendChild(sourceHeader);
+            board.appendChild(homepageLink);
+
+            const newsList = document.createElement('ul');
+            newsList.className = 'space-y-4 overflow-y-auto custom-scrollbar flex-grow'; // Made scrollable
+
+            sourceData.headlines.forEach(article => {
+                const listItem = document.createElement('li');
+                listItem.className = 'news-item bg-white bg-opacity-60 rounded-md shadow-sm overflow-hidden';
+
+                const link = document.createElement('a');
+                link.href = article.url || '#';
+                link.className = 'block p-3 hover:bg-gray-100 transition-colors duration-200';
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+
+                const title = document.createElement('h3');
+                title.className = 'text-md font-semibold text-gray-800';
+                title.textContent = article.title;
+
+                link.appendChild(title);
+                listItem.appendChild(link);
+                newsList.appendChild(listItem);
+            });
+
+            board.appendChild(newsList);
+            newsBoardsContainer.appendChild(board);
+        });
+    }
+
+    // Initial fetch
+    fetchNews();
+
+    // Set up auto-update every 10 seconds
+    setInterval(fetchNews, 10000);
+</script>
+</body>
+</html>
