@@ -9,13 +9,33 @@ import (
 	"github.com/shaharia-lab/headlines-go/headline"
 )
 
+// MockNewsClient is a mock implementation of the NewsClient interface for testing
+type MockNewsClient struct {
+	headlines []headline.NewsItem
+}
+
+func (m *MockNewsClient) GetHeadlines() (headline.Response, error) {
+	return headline.Response{
+		Source:    headline.SourceInfo{Name: "Mock Source", Logo: "http://mock.com/logo.png", Homepage: "http://mock.com"},
+		Headlines: m.headlines,
+	}, nil
+}
+
+func (m *MockNewsClient) Name() string {
+	return "MockClient"
+}
+
+func (m *MockNewsClient) SourceInfo() headline.SourceInfo {
+	return headline.SourceInfo{Name: "Mock Source", Logo: "http://mock.com/logo.png", Homepage: "http://mock.com"}
+}
+
 func TestHeadlinesHandler(t *testing.T) {
 	// Create mock news clients
 	mockClient1 := &MockNewsClient{
-		headlines: []NewsItem{{Title: "Test 1", URL: "http://test1.com"}},
+		headlines: []headline.NewsItem{{Title: "Test 1", URL: "http://test1.com"}},
 	}
 	mockClient2 := &MockNewsClient{
-		headlines: []NewsItem{{Title: "Test 2", URL: "http://test2.com"}},
+		headlines: []headline.NewsItem{{Title: "Test 2", URL: "http://test2.com"}},
 	}
 
 	sources := []headline.NewsClient{mockClient1, mockClient2}
@@ -39,7 +59,7 @@ func TestHeadlinesHandler(t *testing.T) {
 	}
 
 	// Check the response body
-	var response []Response
+	var response []headline.Response
 	err = json.Unmarshal(rr.Body.Bytes(), &response)
 	if err != nil {
 		t.Fatalf("Could not parse response body: %v", err)

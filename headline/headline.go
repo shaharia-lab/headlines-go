@@ -3,10 +3,16 @@ package headline
 import (
 	"bytes"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
 	"time"
+)
+
+var (
+	headlinesCache sync.Map
+	cacheDuration  = 1 * time.Minute
 )
 
 type NewsClient interface {
@@ -97,4 +103,43 @@ func completeURL(baseURL, relativeURL string) string {
 		return baseURL + relativeURL
 	}
 	return baseURL + "/" + relativeURL
+}
+
+func GetHeadlines(sources []NewsClient) []Response {
+	var wg sync.WaitGroup
+	results := make([]Response, len(sources))
+
+	for i, source := range sources {
+		wg.Add(1)
+		go func(index int, s NewsClient) {
+			defer wg.Done()
+			items, err := s.GetHeadlines()
+			if err != nil {
+				log.Printf("Error fetching headlines from %s: %v", s.Name(), err)
+				results[index] = Response{Source: s.SourceInfo(), Headlines: nil}
+			} else {
+				results[index] = items
+			}
+		}(i, source)
+	}
+
+	wg.Wait()
+	return results
+}
+
+func GetCachedHeadlines() ([]Response, bool) {
+	if cachedResp, ok := headlinesCache.Load("headlines"); ok {
+		cached := cachedResp.(CachedResponse)
+		if time.Since(cached.Timestamp) < cacheDuration {
+			return cached.Body, true
+		}
+	}
+	return nil, false
+}
+
+func CacheHeadlines(headlines []Response) {
+	headlinesCache.Store("headlines", CachedResponse{
+		Body:      headlines,
+		Timestamp: time.Now(),
+	})
 }

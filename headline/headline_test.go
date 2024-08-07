@@ -1,11 +1,9 @@
-package main
+package headline
 
 import (
 	"reflect"
 	"testing"
 	"time"
-
-	"github.com/shaharia-lab/headlines-go/headline"
 )
 
 func TestGetAndCacheHeadlines(t *testing.T) {
@@ -26,10 +24,10 @@ func TestGetAndCacheHeadlines(t *testing.T) {
 	}
 
 	// Test caching
-	cacheHeadlines(testHeadlines)
+	CacheHeadlines(testHeadlines)
 
 	// Test retrieval
-	cachedHeadlines, isCached := getCachedHeadlines()
+	cachedHeadlines, isCached := GetCachedHeadlines()
 	if !isCached {
 		t.Error("Expected headlines to be cached")
 	}
@@ -42,7 +40,7 @@ func TestGetAndCacheHeadlines(t *testing.T) {
 	cacheDuration = 1 * time.Millisecond
 	time.Sleep(2 * time.Millisecond)
 
-	_, isCached = getCachedHeadlines()
+	_, isCached = GetCachedHeadlines()
 	if isCached {
 		t.Error("Expected cache to be expired")
 	}
@@ -56,9 +54,9 @@ func TestGetHeadlines(t *testing.T) {
 		headlines: []NewsItem{{Title: "Test 2", URL: "http://test2.com"}},
 	}
 
-	sources := []headline.NewsClient{mockClient1, mockClient2}
+	sources := []NewsClient{mockClient1, mockClient2}
 
-	results := getHeadlines(sources)
+	results := GetHeadlines(sources)
 
 	if len(results) != 2 {
 		t.Errorf("Expected 2 results, got %d", len(results))

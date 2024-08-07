@@ -68,7 +68,7 @@ func serveIndexHandler() http.HandlerFunc {
 
 func headlinesHandler(sources []headline.NewsClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cachedHeadlines, isCached := getCachedHeadlines()
+		cachedHeadlines, isCached := headline.GetCachedHeadlines()
 		if isCached {
 			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("X-Cache", "HIT")
@@ -76,9 +76,9 @@ func headlinesHandler(sources []headline.NewsClient) http.HandlerFunc {
 			return
 		}
 
-		headlines := getHeadlines(sources)
+		headlines := headline.GetHeadlines(sources)
 
-		cacheHeadlines(headlines)
+		headline.CacheHeadlines(headlines)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("X-Cache", "MISS")
