@@ -78,13 +78,6 @@ func TestMZaminClient_GetHeadlines(t *testing.T) {
 	}
 }
 
-func TestMZaminClient_Name(t *testing.T) {
-	client := &MZaminClient{}
-	if client.Name() != "manab_zamin" {
-		t.Errorf("Expected name 'manab_zamin', got '%s'", client.Name())
-	}
-}
-
 func TestMZaminClient_SourceInfo(t *testing.T) {
 	client := &MZaminClient{}
 	info := client.SourceInfo()

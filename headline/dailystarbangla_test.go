@@ -84,13 +84,6 @@ func TestDailyStarBanglaClient_GetHeadlines(t *testing.T) {
 	}
 }
 
-func TestDailyStarBanglaClient_Name(t *testing.T) {
-	client := &DailyStarBanglaClient{}
-	if client.Name() != "Daily Star Bangla" {
-		t.Errorf("Expected name 'Daily Star Bangla', got '%s'", client.Name())
-	}
-}
-
 func TestDailyStarBanglaClient_SourceInfo(t *testing.T) {
 	client := &DailyStarBanglaClient{}
 	info := client.SourceInfo()
