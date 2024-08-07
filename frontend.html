@@ -20,19 +20,47 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        .loading {
+            background: url('loading.svg') no-repeat center center;
+            background-size: contain;
+        }
+        .disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
-<header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
-    <div class="container mx-auto py-4 px-6">
+<header class="bg-green-800 text-white shadow-md">
+    <div class="container mx-auto py-4 px-6 flex justify-between items-center">
         <h1 class="text-3xl font-bold">headlines-go - get all headlines in one place</h1>
+        <a href="https://github.com/shaharia-lab/headlines-go" target="_blank" class="text-white underline">GitHub Repo</a>
     </div>
 </header>
 
+<nav class="bg-white shadow-md py-4">
+    <div class="container mx-auto">
+        <p class="text-gray-700">Welcome to headlines-go! Get the latest news from multiple sources all in one place. Toggle sources to customize your feed.</p>
+    </div>
+</nav>
+
 <main class="container mx-auto p-6">
+    <div class="flex justify-end mb-4">
+        <label class="flex items-center">
+            <input type="checkbox" id="liveRefreshToggle" class="mr-2">
+            Live Refresh
+        </label>
+    </div>
+    <div id="countdown" class="text-right text-gray-500 mb-6"></div>
     <div id="boardToggles" class="mb-6 bg-white p-4 rounded-lg shadow-md"></div>
     <div id="newsBoards" class="news-boards grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 </main>
+
+<footer class="bg-gray-200 py-4 mt-6">
+    <div class="container mx-auto text-center text-gray-700">
+        &copy; 2024 headlines-go. All rights reserved.
+    </div>
+</footer>
 
 <script>
     const boardColors = [
@@ -41,6 +69,17 @@
     ];
 
     let newsData = [];
+    let liveRefresh = true;
+    let refreshInterval;
+
+    document.getElementById('liveRefreshToggle').addEventListener('change', (e) => {
+        liveRefresh = e.target.checked;
+        if (liveRefresh) {
+            startRefreshTimer();
+        } else {
+            clearInterval(refreshInterval);
+        }
+    });
 
     async function fetchNews() {
         try {
@@ -54,6 +93,8 @@
         } catch (error) {
             console.error('Failed to fetch news data:', error);
             document.getElementById('newsBoards').innerHTML = '<p class="text-red-500 text-center w-full col-span-full">Failed to load news. Please try again later.</p>';
+        } finally {
+            document.getElementById('newsBoards').classList.remove('loading');
         }
     }
 
@@ -154,27 +195,58 @@
 
         data.forEach((sourceData, index) => {
             const toggle = document.createElement('button');
-            toggle.className = 'px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors';
+            toggle.className = `px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors ${isBoardHidden(index) ? 'disabled' : ''}`;
             toggle.textContent = sourceData.source.name;
-            toggle.onclick = () => toggleBoard(index);
+            toggle.onclick = () => toggleBoard(index, toggle);
             togglesWrapper.appendChild(toggle);
         });
 
         togglesContainer.appendChild(togglesWrapper);
     }
 
-    function toggleBoard(index) {
+    function toggleBoard(index, button) {
         const board = document.getElementById(`board-${index}`);
         if (board) {
             board.classList.toggle('hidden');
+            button.classList.toggle('disabled');
+            saveBoardState(index, !board.classList.contains('hidden'));
         }
     }
 
-    // Initial fetch
-    fetchNews();
+    function isBoardHidden(index) {
+        const boardState = JSON.parse(localStorage.getItem('boardState')) || {};
+        return !boardState[`board-${index}`];
+    }
 
-    // Set up auto-update every 30 seconds
-    setInterval(fetchNews, 30000);
+    function saveBoardState(index, isVisible) {
+        const boardState = JSON.parse(localStorage.getItem('boardState')) || {};
+        boardState[`board-${index}`] = isVisible;
+        localStorage.setItem('boardState', JSON.stringify(boardState));
+    }
+
+    function startRefreshTimer() {
+        let countdown = 10;
+        const countdownElement = document.getElementById('countdown');
+        countdownElement.textContent = `Refreshing in ${countdown}s`;
+
+        refreshInterval = setInterval(() => {
+            if (!liveRefresh) return;
+            countdown--;
+            countdownElement.textContent = `Refreshing in ${countdown}s`;
+
+            if (countdown === 0) {
+                fetchNews();
+                countdown = 10;
+            }
+        }, 1000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('liveRefreshToggle').checked = true;
+        fetchNews();
+        startRefreshTimer();
+    });
+
 </script>
 </body>
 </html>
