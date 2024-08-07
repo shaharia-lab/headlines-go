@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/shaharia-lab/headlines-go/headline"
 )
 
 func TestHeadlinesHandler(t *testing.T) {
@@ -16,7 +18,7 @@ func TestHeadlinesHandler(t *testing.T) {
 		headlines: []NewsItem{{Title: "Test 2", URL: "http://test2.com"}},
 	}
 
-	sources := []NewsClient{mockClient1, mockClient2}
+	sources := []headline.NewsClient{mockClient1, mockClient2}
 
 	// Create a request to pass to our handler
 	req, err := http.NewRequest("GET", "/api/headlines", nil)

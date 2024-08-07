@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/shaharia-lab/headlines-go/headline"
 )
 
 //go:embed frontend.html
@@ -22,12 +23,12 @@ func main() {
 	port := flag.Int("port", 8080, "Port to run the server on")
 	flag.Parse()
 
-	httpClient := NewCachingHTTPClient(5*time.Second, "bdnews/1.0")
+	httpClient := headline.NewCachingHTTPClient(5*time.Second, "bdnews/1.0")
 
-	sources := []NewsClient{
-		NewProthomAloClient("https://www.prothomalo.com/", httpClient),
-		NewMZaminClient("https://mzamin.com/", httpClient),
-		NewDailyStarBanglaClient("https://bangla.thedailystar.net/", httpClient),
+	sources := []headline.NewsClient{
+		headline.NewProthomAloClient("https://www.prothomalo.com/", httpClient),
+		headline.NewMZaminClient("https://mzamin.com/", httpClient),
+		headline.NewDailyStarBanglaClient("https://bangla.thedailystar.net/", httpClient),
 	}
 
 	r := chi.NewRouter()
@@ -65,7 +66,7 @@ func serveIndexHandler() http.HandlerFunc {
 	}
 }
 
-func headlinesHandler(sources []NewsClient) http.HandlerFunc {
+func headlinesHandler(sources []headline.NewsClient) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cachedHeadlines, isCached := getCachedHeadlines()
 		if isCached {

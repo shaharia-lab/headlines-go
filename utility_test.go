@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/shaharia-lab/headlines-go/headline"
 )
 
 func TestGetAndCacheHeadlines(t *testing.T) {
@@ -54,7 +56,7 @@ func TestGetHeadlines(t *testing.T) {
 		headlines: []NewsItem{{Title: "Test 2", URL: "http://test2.com"}},
 	}
 
-	sources := []NewsClient{mockClient1, mockClient2}
+	sources := []headline.NewsClient{mockClient1, mockClient2}
 
 	results := getHeadlines(sources)
 
