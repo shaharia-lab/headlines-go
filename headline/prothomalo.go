@@ -20,10 +20,6 @@ func NewProthomAloClient(url string, client *CachingHTTPClient) *ProthomAloClien
 	}
 }
 
-func (c *ProthomAloClient) Name() string {
-	return "prothom_alo"
-}
-
 func (c *ProthomAloClient) SourceInfo() SourceInfo {
 	return SourceInfo{
 		Name:     "ProthomAlo",

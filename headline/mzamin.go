@@ -8,11 +8,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+// MZaminClient is a client to fetch headlines from mzamin.com
 type MZaminClient struct {
 	URL        string
 	HTTPClient *CachingHTTPClient
 }
 
+// NewMZaminClient creates a new MZaminClient
 func NewMZaminClient(url string, client *CachingHTTPClient) *MZaminClient {
 	return &MZaminClient{
 		URL:        url,
@@ -20,10 +22,7 @@ func NewMZaminClient(url string, client *CachingHTTPClient) *MZaminClient {
 	}
 }
 
-func (c *MZaminClient) Name() string {
-	return "manab_zamin"
-}
-
+// SourceInfo returns information about the news source
 func (c *MZaminClient) SourceInfo() SourceInfo {
 	return SourceInfo{
 		Name:     "মানবজমিন",
@@ -32,6 +31,7 @@ func (c *MZaminClient) SourceInfo() SourceInfo {
 	}
 }
 
+// GetHeadlines fetches the headlines from mzamin.com
 func (c *MZaminClient) GetHeadlines() (Response, error) {
 	resp, err := c.HTTPClient.Get(c.URL)
 	if err != nil {

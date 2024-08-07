@@ -20,10 +20,6 @@ func NewDailyStarBanglaClient(url string, client *CachingHTTPClient) *DailyStarB
 	}
 }
 
-func (c *DailyStarBanglaClient) Name() string {
-	return "Daily Star Bangla"
-}
-
 func (c *DailyStarBanglaClient) SourceInfo() SourceInfo {
 	return SourceInfo{
 		Name:     "Daily Star Bangla",
