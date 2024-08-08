@@ -1,4 +1,4 @@
-package main
+package headline
 
 import (
 	"fmt"
@@ -8,11 +8,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+// DailyStarBanglaClient is a client to fetch headlines from bangla.thedailystar.net
 type DailyStarBanglaClient struct {
 	URL        string
 	HTTPClient *CachingHTTPClient
 }
 
+// NewDailyStarBanglaClient creates a new DailyStarBanglaClient
 func NewDailyStarBanglaClient(url string, client *CachingHTTPClient) *DailyStarBanglaClient {
 	return &DailyStarBanglaClient{
 		URL:        url,
@@ -20,10 +22,7 @@ func NewDailyStarBanglaClient(url string, client *CachingHTTPClient) *DailyStarB
 	}
 }
 
-func (c *DailyStarBanglaClient) Name() string {
-	return "Daily Star Bangla"
-}
-
+// SourceInfo returns information about the news source
 func (c *DailyStarBanglaClient) SourceInfo() SourceInfo {
 	return SourceInfo{
 		Name:     "Daily Star Bangla",
@@ -32,6 +31,7 @@ func (c *DailyStarBanglaClient) SourceInfo() SourceInfo {
 	}
 }
 
+// GetHeadlines fetches the headlines from bangla.thedailystar.net
 func (c *DailyStarBanglaClient) GetHeadlines() (Response, error) {
 	resp, err := c.HTTPClient.Get(c.URL)
 	if err != nil {
@@ -82,6 +82,7 @@ func (c *DailyStarBanglaClient) extractDailyStarBanglaHeadlines(htmlContent, bas
 	return headlines, nil
 }
 
+// extractHeadlinesFromSection extracts headlines from a section of the page
 func (c *DailyStarBanglaClient) extractHeadlinesFromSection(n *html.Node, headlines *[]NewsItem, baseURL string) {
 	var f func(*html.Node)
 	f = func(n *html.Node) {

@@ -1,4 +1,4 @@
-package main
+package headline
 
 import (
 	"net/http"
@@ -75,13 +75,6 @@ func TestMZaminClient_GetHeadlines(t *testing.T) {
 
 	if response.Source != expectedSourceInfo {
 		t.Errorf("Expected source info %+v, got %+v", expectedSourceInfo, response.Source)
-	}
-}
-
-func TestMZaminClient_Name(t *testing.T) {
-	client := &MZaminClient{}
-	if client.Name() != "manab_zamin" {
-		t.Errorf("Expected name 'manab_zamin', got '%s'", client.Name())
 	}
 }
 

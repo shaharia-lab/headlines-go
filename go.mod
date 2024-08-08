@@ -1,4 +1,4 @@
-module github.com/shaharia-lab/headlines-go
+module github.com/shaharia-lab/headlines
 
 go 1.22
 
