@@ -12,6 +12,14 @@ A simple tool to fetch news headlines from different news sources.
 
 ## Installation
 
+### Using Docker
+
+Get the latest version from the [release page](https://github.com/shaharia-lab/headlines/releases)
+
+```bash
+docker run -p 8081:8080 ghcr.io/shaharia-lab/headlines:{VERSION}
+```
+
 ### Using Binary
 
 Download the binary from the [release page](https://github.com/shaharia-lab/headlines/releases)
@@ -21,10 +29,10 @@ Download the binary from the [release page](https://github.com/shaharia-lab/head
 Please clone the repository and run the following command.
 
 ```bash
-go run . -port 8081
+go run . -port 8080
 ```
 
-Please go to http://localhost:8081 to see the UI.
+Please go to http://localhost:8080 to see the UI.
 
 ## Contribution
 
