@@ -8,11 +8,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+// ProthomAloClient is a client to fetch headlines from prothomalo.com
 type ProthomAloClient struct {
 	URL        string
 	HTTPClient *CachingHTTPClient
 }
 
+// NewProthomAloClient creates a new ProthomAloClient
 func NewProthomAloClient(url string, client *CachingHTTPClient) *ProthomAloClient {
 	return &ProthomAloClient{
 		URL:        url,
@@ -20,6 +22,7 @@ func NewProthomAloClient(url string, client *CachingHTTPClient) *ProthomAloClien
 	}
 }
 
+// SourceInfo returns information about the news source
 func (c *ProthomAloClient) SourceInfo() SourceInfo {
 	return SourceInfo{
 		Name:     "ProthomAlo",
@@ -28,6 +31,7 @@ func (c *ProthomAloClient) SourceInfo() SourceInfo {
 	}
 }
 
+// GetHeadlines fetches the headlines from prothomalo.com
 func (c *ProthomAloClient) GetHeadlines() (Response, error) {
 	resp, err := c.HTTPClient.Get(c.URL)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/shaharia-lab/headlines-go/headline"
+	"github.com/shaharia-lab/headlines/headline"
 )
 
 // MockNewsClient is a mock implementation of the NewsClient interface for testing

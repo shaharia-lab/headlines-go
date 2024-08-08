@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
-	"github.com/shaharia-lab/headlines-go/headline"
+	"github.com/shaharia-lab/headlines/headline"
 )
 
 //go:embed frontend.html
@@ -23,7 +23,7 @@ func main() {
 	port := flag.Int("port", 8080, "Port to run the server on")
 	flag.Parse()
 
-	httpClient := headline.NewCachingHTTPClient(5*time.Second, "bdnews/1.0")
+	httpClient := headline.NewCachingHTTPClient(5*time.Second, "headlines/1.0")
 
 	sources := []headline.NewsClient{
 		headline.NewProthomAloClient("https://www.prothomalo.com/", httpClient),
